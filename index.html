@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Differences: Time Travel</title>
+<style>
+  :root {
+    --bg: #1c140d;
+    --bg-panel: #2a1e14;
+    --stone: #3a2c1e;
+    --stone-light: #4a3826;
+    --amber: #e0a84c;
+    --amber-light: #f4c873;
+    --text: #f2e7d5;
+    --text-muted: #c9b79c;
+    --border: #5a4530;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: linear-gradient(180deg, #241a11 0%, #1c140d 60%, #150f0a 100%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+  }
+
+  header.hero {
+    text-align: center;
+    padding: 24px 0 12px;
+  }
+
+  .icon {
+    width: 108px;
+    height: 108px;
+    border-radius: 26px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 3px var(--amber);
+    display: block;
+    margin: 0 auto 20px;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+    letter-spacing: 0.3px;
+    margin: 0 0 6px;
+    color: var(--amber-light);
+  }
+
+  .tagline {
+    color: var(--text-muted);
+    font-size: 1.02rem;
+    margin: 0 0 8px;
+  }
+
+  section {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+    margin-top: 22px;
+  }
+
+  h2 {
+    color: var(--amber);
+    font-size: 1.15rem;
+    margin: 0 0 14px;
+    letter-spacing: 0.2px;
+  }
+
+  p {
+    margin: 0 0 14px;
+    color: var(--text);
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  ul.features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+  }
+
+  ul.features li {
+    background: var(--stone);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  ul.features li strong {
+    color: var(--amber-light);
+    display: block;
+    margin-bottom: 2px;
+    font-size: 0.92rem;
+  }
+
+  .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  a {
+    color: var(--amber-light);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(244, 200, 115, 0.4);
+  }
+
+  a:hover { border-bottom-color: var(--amber-light); }
+
+  .btn {
+    display: inline-block;
+    background: var(--amber);
+    color: #241a0c;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: none;
+    text-decoration: none;
+  }
+
+  .btn:hover { background: var(--amber-light); border-bottom: none; }
+
+  footer {
+    text-align: center;
+    margin-top: 36px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  footer a {
+    color: var(--text-muted);
+    border-bottom-color: rgba(201, 183, 156, 0.4);
+  }
+
+  @media (max-width: 480px) {
+    ul.features {
+      grid-template-columns: 1fr;
+    }
+    h1 { font-size: 1.6rem; }
+    section { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <img class="icon" src="assets/icon_512.png" alt="Find Differences: Time Travel icon">
+      <h1>Find Differences: Time Travel</h1>
+      <p class="tagline">A find-the-differences puzzle game across the ages.</p>
+    </header>
+
+    <section>
+      <h2>About the game</h2>
+      <p>
+        Find Differences: Time Travel is a relaxing "spot the difference" puzzle
+        game that sends you on a journey through history. Each level presents two
+        nearly identical scenes — you tap to find every subtle change between
+        them, from a misplaced torch in a Stone Age camp to a shifted jar in a
+        Mesopotamian marketplace.
+      </p>
+      <p>
+        Levels are grouped into chapters, and chapters into historical ages —
+        as you complete them, the map unfolds further into the past (and
+        beyond). Along the way you'll fill a growing museum collection of
+        artifacts discovered from each era, and can return every day for a
+        fresh daily challenge level and streak rewards.
+      </p>
+      <p>
+        The game is available in six languages — English, Turkish, Spanish,
+        Portuguese, German, and French — so you can play in the language you're
+        most comfortable with.
+      </p>
+    </section>
+
+    <section>
+      <h2>Features</h2>
+      <ul class="features">
+        <li><strong>Time-travel journey</strong>Explore multiple historical ages, chapter by chapter</li>
+        <li><strong>Museum collection</strong>Unlock artifacts as you complete levels</li>
+        <li><strong>Daily challenge</strong>A new level every day, with streak rewards</li>
+        <li><strong>6 languages</strong>English, Turkish, Spanish, Portuguese, German, French</li>
+        <li><strong>Relaxing pace</strong>No pressure — hints and continues are always available</li>
+        <li><strong>Free to play</strong>Supported by ads, with an optional ad-free purchase</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Privacy &amp; contact</h2>
+      <p>
+        You can read our full privacy policy here:
+        <a class="btn" href="privacy.html">Privacy Policy</a>
+      </p>
+      <p class="contact-row">
+        Questions or feedback? Reach us at
+        <a href="mailto:infobrainlio@gmail.com">infobrainlio@gmail.com</a>
+      </p>
+    </section>
+
+    <footer>
+      &copy; 2026 Brainlio
+    </footer>
+  </div>
+</body>
+</html>
