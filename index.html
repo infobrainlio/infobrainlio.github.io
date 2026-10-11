@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Find Differences: Time Travel</title>
+<meta name="description" content="Find the difference between two pictures! Spot them all &amp; travel through time.">
 <style>
   :root {
     --bg: #1c140d;
@@ -141,6 +142,56 @@
 
   .btn:hover { background: var(--amber-light); border-bottom: none; }
 
+  .shots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 22px 0 6px;
+  }
+
+  .shots img {
+    width: 31%;
+    max-width: 220px;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 22px 0 4px;
+  }
+
+  .cta .btn {
+    font-size: 1.2rem;
+    font-weight: 800;
+    padding: 16px 34px;
+    min-width: 230px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  }
+
+  .cta .btn small {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.8;
+  }
+
+  .cta .btn.soon {
+    background: var(--stone-light);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    cursor: default;
+  }
+
+  .cta [hidden] { display: none; }
+
   footer {
     text-align: center;
     margin-top: 36px;
@@ -158,6 +209,8 @@
       grid-template-columns: 1fr;
     }
     h1 { font-size: 1.6rem; }
+    .shots { gap: 8px; }
+    .cta .btn { width: 100%; }
     section { padding: 20px 18px; }
   }
 </style>
@@ -165,9 +218,21 @@
 <body>
   <div class="wrap">
     <header class="hero">
-      <img class="icon" src="assets/icon_512.png" alt="Find Differences: Time Travel icon">
+      <img class="icon" src="assets/icon_216.jpg" width="108" height="108" alt="Find Differences: Time Travel icon">
       <h1>Find Differences: Time Travel</h1>
-      <p class="tagline">A find-the-differences puzzle game across the ages.</p>
+      <p class="tagline">Find the difference between two pictures! Spot them all &amp; travel through time.</p>
+
+      <div class="shots">
+        <img src="assets/shot1.jpg" width="540" height="960" alt="Find the differences between two pictures">
+        <img src="assets/shot2.jpg" width="540" height="960" alt="Travel through every era">
+        <img src="assets/shot3.jpg" width="540" height="960" alt="Collect ancient artifacts">
+      </div>
+
+      <!-- JavaScript kapalıysa iki buton da görünür (masaüstü görünümü). -->
+      <div class="cta">
+        <a class="btn" id="cta-android" href="https://play.google.com/store/apps/details?id=com.brainlio.game&amp;referrer=utm_source%3Ddirect%26utm_medium%3Dnone%26utm_campaign%3Dlaunch"><span data-play>Play Now</span><small data-store>Google Play</small></a>
+        <span class="btn soon" id="cta-ios" aria-disabled="true"><span data-soon>Coming soon</span><small>App Store</small></span>
+      </div>
     </header>
 
     <section>
@@ -221,5 +286,28 @@
       &copy; 2026 Brainlio
     </footer>
   </div>
+<script>
+(function () {
+  var PLAY = 'https://play.google.com/store/apps/details?id=com.brainlio.game';
+  // ?from=instagram -> referrer=utm_source=instagram&utm_medium=bio&utm_campaign=launch
+  var from = (new URLSearchParams(location.search).get('from') || '').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 40);
+  var referrer = 'utm_source=' + (from || 'direct') + '&utm_medium=' + (from ? 'bio' : 'none') + '&utm_campaign=launch';
+  var android = document.getElementById('cta-android');
+  var ios = document.getElementById('cta-ios');
+  android.href = PLAY + '&referrer=' + encodeURIComponent(referrer);
+
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  // iPadOS masaüstü Safari kendini Mac olarak tanıtır; dokunmatik Mac yok.
+  var isIos = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+  if (isAndroid) ios.hidden = true;
+  else if (isIos) android.hidden = true;
+
+  if ((navigator.language || '').toLowerCase().indexOf('tr') === 0) {
+    android.querySelector('[data-play]').textContent = 'Hemen Oyna';
+    ios.querySelector('[data-soon]').textContent = 'Çok yakında';
+  }
+})();
+</script>
 </body>
 </html>
