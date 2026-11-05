@@ -9,14 +9,14 @@
   // iPadOS'un masaüstü tarayıcısı kendini Mac olarak tanıtır; dokunmatik Mac yok.
   var isIOS = /iPhone|iPad|iPod/i.test(ua) ||
     (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
-  // TikTok'un uygulama içi tarayıcısı dokunmadan yapılan mağaza yönlendirmesini engeller.
+  // TikTok'un uygulama içi tarayıcısı mağaza linklerini (dokunarak bile) engeller.
   // musical_ly'den sonra sürüm eki gelebilir (musical_ly_37.0.0) — kelime sınırı kullanma.
   var isTikTok = /musical_?ly|BytedanceWebview|trill_|com\.ss\.android\.ugc\.trill|com\.zhiliaoapp\.musically|TikTok/i.test(ua);
   if (!isTikTok) {
     location.replace(isIOS ? ios : play);
     return;
   }
-  window.__brainlioStore = { ios: isIOS, appStore: ios, play: play };
+  window.__brainlioStore = { ios: isIOS };
   document.documentElement.className = "tt";
 })();
 </script>
@@ -39,7 +39,7 @@
 <meta name="twitter:image" content="https://brainlio.app/assets/icon_512.png">
 <style>
   html, body { margin: 0; background: #1c140d; }
-  #tt { display: none; }
+  #tt, #fb, #search { display: none; }
   html.tt #tt {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     min-height: 100vh; min-height: 100dvh; box-sizing: border-box; padding: 32px 24px;
@@ -60,41 +60,93 @@
   }
   #tt a.btn:active { background: #f4c873; }
   #tt p { margin: 20px 0 0; max-width: 320px; font-size: 15px; line-height: 1.45; color: #c9b79c; }
+
+  /* Yedek: tarayıcı açılmazsa sağ üst köşeyi gösteren ok + yazı */
+  html.fb #note { display: none; }
+  html.fb #search { display: block; }
+  html.fb #fb {
+    display: flex; flex-direction: column; align-items: flex-end;
+    position: fixed; top: 0; right: 0; left: 0; padding: 8px 14px 0 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    pointer-events: none;
+  }
+  #fb svg { width: 112px; height: 112px; animation: nudge 1.1s ease-in-out infinite; }
+  #fb div {
+    margin-top: 4px; max-width: 290px; padding: 14px 18px; border-radius: 16px;
+    background: #f4c873; color: #241a0c; font-size: 20px; font-weight: 800; line-height: 1.3;
+    text-align: right; box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  }
+  @keyframes nudge { 0%,100% { transform: translate(0,0); } 50% { transform: translate(6px,-6px); } }
+  @media (prefers-reduced-motion: reduce) { #fb svg { animation: none; } }
+  html.fb #tt { padding-top: 230px; }
 </style>
 </head>
 <body>
+<div id="fb" aria-live="polite">
+  <svg viewBox="0 0 100 100" aria-hidden="true">
+    <path d="M20 88 C 30 55, 50 35, 80 22" fill="none" stroke="#f4c873" stroke-width="9" stroke-linecap="round"/>
+    <path d="M58 12 L 88 18 L 76 46" fill="none" stroke="#f4c873" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <div id="fbtext">Tap &bull;&bull;&bull; at the top right &rarr; &ldquo;Open in browser&rdquo;</div>
+</div>
 <div id="tt">
   <img src="/assets/icon_512.png" alt="">
   <h1>Find Differences: Time Travel</h1>
   <a id="go" class="btn" href="https://play.google.com/store/apps/details?id=com.brainlio.game">Open in Google Play</a>
   <p id="note">If it doesn't open, tap &bull;&bull;&bull; at the top right and choose &ldquo;Open in browser&rdquo;.</p>
+  <p id="search">or search &ldquo;Find Differences Time Travel&rdquo; in the App Store</p>
 </div>
 <script>
 (function () {
   var s = window.__brainlioStore;
   if (!s) return;
   var tr = /^tr/i.test(navigator.language || "");
+  var html = document.documentElement;
   var go = document.getElementById("go");
-  var intent = "intent://details?id=com.brainlio.game#Intent;scheme=market;package=com.android.vending;" +
+  // Denenen adresler (yalnızca test/teşhis için okunur).
+  var tried = window.__brainlioTried = [];
+  // Önce sistem tarayıcısında aç: orada sayfa TikTok'u görmez ve mağazaya anında gider.
+  var safari = "x-safari-https://brainlio.app/get/";
+  var chrome = "intent://brainlio.app/get/#Intent;scheme=https;package=com.android.chrome;" +
     "S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.brainlio.game;end";
-  if (s.ios) {
-    go.href = s.appStore;
-    go.textContent = tr ? "App Store'da aç" : "Open in App Store";
-  } else {
-    go.href = intent;
-    go.textContent = tr ? "Google Play'de aç" : "Open in Google Play";
-    // Intent açılmazsa (sayfa hâlâ görünürse) Play web adresine düş.
-    go.addEventListener("click", function () {
-      setTimeout(function () {
-        if (!document.hidden) location.href = s.play;
-      }, 1500);
-    });
-  }
+  var playIntent = "intent://details?id=com.brainlio.game#Intent;scheme=market;package=com.android.vending;" +
+    "S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.brainlio.game;end";
+  var store = s.ios ? "App Store" : "Google Play";
+
+  go.href = s.ios ? safari : chrome;
   if (tr) {
-    document.documentElement.lang = "tr";
+    html.lang = "tr";
+    go.textContent = s.ios ? "App Store'da aç" : "Google Play'de aç";
     document.getElementById("note").textContent =
       "Açılmazsa sağ üstteki ••• menüsünden “Tarayıcıda aç” seçeneğini seç.";
+    document.getElementById("fbtext").textContent =
+      "Sağ üstteki ••• simgesine dokun → “Tarayıcıda aç”";
+    document.getElementById("search").textContent =
+      "veya " + (s.ios ? "App Store'da" : "Google Play'de") + " “Find Differences Time Travel” ara";
+  } else {
+    go.textContent = "Open in " + store;
+    document.getElementById("search").textContent =
+      "or search “Find Differences Time Travel” in " + (s.ios ? "the App Store" : "Google Play");
   }
+
+  var timers = [];
+  go.addEventListener("click", function () {
+    tried.push(go.href);
+    timers.forEach(clearTimeout);
+    timers = [];
+    if (!s.ios) {
+      // Chrome açılmadıysa ikinci deneme: Play uygulamasını doğrudan aç.
+      timers.push(setTimeout(function () {
+        if (document.hidden) return;
+        tried.push(playIntent);
+        location.href = playIntent;
+      }, 700));
+    }
+    // 1,5 sn sonra sayfa hâlâ görünüyorsa hiçbir şey açılmamıştır: yönlendirme yedeğini göster.
+    timers.push(setTimeout(function () {
+      if (!document.hidden) html.className = "tt fb";
+    }, 1500));
+  });
 })();
 </script>
 </body>
