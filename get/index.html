@@ -9,11 +9,19 @@
   // iPadOS'un masaüstü tarayıcısı kendini Mac olarak tanıtır; dokunmatik Mac yok.
   var isIOS = /iPhone|iPad|iPod/i.test(ua) ||
     (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
-  location.replace(isIOS ? ios : play);
+  // TikTok'un uygulama içi tarayıcısı dokunmadan yapılan mağaza yönlendirmesini engeller.
+  // musical_ly'den sonra sürüm eki gelebilir (musical_ly_37.0.0) — kelime sınırı kullanma.
+  var isTikTok = /musical_?ly|BytedanceWebview|trill_|com\.ss\.android\.ugc\.trill|com\.zhiliaoapp\.musically|TikTok/i.test(ua);
+  if (!isTikTok) {
+    location.replace(isIOS ? ios : play);
+    return;
+  }
+  window.__brainlioStore = { ios: isIOS, appStore: ios, play: play };
+  document.documentElement.className = "tt";
 })();
 </script>
 <meta charset="utf-8">
-<meta http-equiv="refresh" content="0; url=https://play.google.com/store/apps/details?id=com.brainlio.game">
+<noscript><meta http-equiv="refresh" content="0; url=https://play.google.com/store/apps/details?id=com.brainlio.game"></noscript>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Find Differences: Time Travel</title>
@@ -29,7 +37,65 @@
 <meta name="twitter:title" content="Find Differences: Time Travel">
 <meta name="twitter:description" content="Spot the differences and travel through history. Free puzzle game for iPhone, iPad and Android.">
 <meta name="twitter:image" content="https://brainlio.app/assets/icon_512.png">
-<style>html,body{margin:0;background:#1c140d}</style>
+<style>
+  html, body { margin: 0; background: #1c140d; }
+  #tt { display: none; }
+  html.tt #tt {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; min-height: 100dvh; box-sizing: border-box; padding: 32px 24px;
+    text-align: center; color: #f2e7d5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  #tt img {
+    width: 128px; height: 128px; border-radius: 30px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 3px #e0a84c;
+  }
+  #tt h1 { margin: 24px 0 32px; font-size: 26px; line-height: 1.25; color: #f4c873; }
+  #tt a.btn {
+    display: block; width: 100%; max-width: 340px; box-sizing: border-box;
+    padding: 18px 24px; border-radius: 999px;
+    background: #e0a84c; color: #241a0c; font-size: 20px; font-weight: 700;
+    text-decoration: none; -webkit-tap-highlight-color: transparent;
+  }
+  #tt a.btn:active { background: #f4c873; }
+  #tt p { margin: 20px 0 0; max-width: 320px; font-size: 15px; line-height: 1.45; color: #c9b79c; }
+</style>
 </head>
-<body></body>
+<body>
+<div id="tt">
+  <img src="/assets/icon_512.png" alt="">
+  <h1>Find Differences: Time Travel</h1>
+  <a id="go" class="btn" href="https://play.google.com/store/apps/details?id=com.brainlio.game">Open in Google Play</a>
+  <p id="note">If it doesn't open, tap &bull;&bull;&bull; at the top right and choose &ldquo;Open in browser&rdquo;.</p>
+</div>
+<script>
+(function () {
+  var s = window.__brainlioStore;
+  if (!s) return;
+  var tr = /^tr/i.test(navigator.language || "");
+  var go = document.getElementById("go");
+  var intent = "intent://details?id=com.brainlio.game#Intent;scheme=market;package=com.android.vending;" +
+    "S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.brainlio.game;end";
+  if (s.ios) {
+    go.href = s.appStore;
+    go.textContent = tr ? "App Store'da aç" : "Open in App Store";
+  } else {
+    go.href = intent;
+    go.textContent = tr ? "Google Play'de aç" : "Open in Google Play";
+    // Intent açılmazsa (sayfa hâlâ görünürse) Play web adresine düş.
+    go.addEventListener("click", function () {
+      setTimeout(function () {
+        if (!document.hidden) location.href = s.play;
+      }, 1500);
+    });
+  }
+  if (tr) {
+    document.documentElement.lang = "tr";
+    document.getElementById("note").textContent =
+      "Açılmazsa sağ üstteki ••• menüsünden “Tarayıcıda aç” seçeneğini seç.";
+  }
+})();
+</script>
+</body>
 </html>
